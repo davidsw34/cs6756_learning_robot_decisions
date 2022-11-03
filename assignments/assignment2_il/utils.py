@@ -43,7 +43,9 @@ def argmax_policy(net):
     # - argmax_fn: A function which takes in a state, and outputs the maximum Q value of said state.
 
     def argmax_fn(state):
-        action_logit = np.max(net(state))
+        state_tensor = torch.from_numpy(state).to(torch.float32)
+        output = net(state_tensor)
+        action_logit = torch.argmax(output)
         return action_logit
 
     return argmax_fn
