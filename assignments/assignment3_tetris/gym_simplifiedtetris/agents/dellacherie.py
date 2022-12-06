@@ -58,7 +58,8 @@ class DellacherieAgent(BaseAgent):
             env._engine._colour_grid = deepcopy(old_colour_grid)
             env._engine._anchor = deepcopy(old_anchor)
 
-        best_actions = np.argwhere(dell_scores == np.amax(dell_scores)).flatten()
+        best_actions = np.argwhere(
+            dell_scores == np.amax(dell_scores)).flatten()
         is_a_tie = len(best_actions) > 1
 
         # Resort to the priorities if there is a tie.
@@ -153,7 +154,8 @@ class DellacherieAgent(BaseAgent):
         :return: row transitions.
         """
         # Adds a column either side.
-        grid = np.ones((env._engine._width + 2, env._engine._height), dtype="bool")
+        grid = np.ones(
+            (env._engine._width + 2, env._engine._height), dtype="bool")
 
         grid[1:-1, :] = env._engine._grid.copy()
         return int(np.diff(grid.T).sum())
@@ -170,7 +172,8 @@ class DellacherieAgent(BaseAgent):
         :return: column transitions.
         """
         # Adds a full row to the bottom.
-        grid = np.ones((env._engine._width, env._engine._height + 1), dtype="bool")
+        grid = np.ones(
+            (env._engine._width, env._engine._height + 1), dtype="bool")
 
         grid[:, :-1] = env._engine._grid.copy()
         return int(np.diff(grid).sum())
@@ -206,12 +209,15 @@ class DellacherieAgent(BaseAgent):
 
         # This includes some cells that cannot be reached from above.
         potential_wells = (
-            np.roll(grid_ext, 1, axis=0) & np.roll(grid_ext, -1, axis=0) & ~grid_ext
+            np.roll(grid_ext, 1, axis=0) & np.roll(
+                grid_ext, -1, axis=0) & ~grid_ext
         )
 
         col_heights = np.zeros(env._engine._width + 2)
-        col_heights[1:-1] = env._engine._height - np.argmax(env._engine._grid, axis=1)
-        col_heights = np.where(col_heights == env._engine._height, 0, col_heights)
+        col_heights[1:-1] = env._engine._height - \
+            np.argmax(env._engine._grid, axis=1)
+        col_heights = np.where(
+            col_heights == env._engine._height, 0, col_heights)
 
         x = np.linspace(1, env._engine._width + 2, env._engine._width + 2)
         y = np.linspace(env._engine._height + 1, 1, env._engine._height + 1)

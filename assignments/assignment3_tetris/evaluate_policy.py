@@ -4,6 +4,7 @@ from tqdm import trange
 import gym
 from gym_simplifiedtetris.envs import SimplifiedTetrisBinaryEnv as Tetris
 
+
 def test_policy(obs, env):
     """ Policy to be evaluated.
 
@@ -20,8 +21,12 @@ def test_policy(obs, env):
     Return:
         The action to execute
     """
-    #TODO: Please call your trained policy here.
+    # TODO: Please call your trained policy here.
     # For now, we randomly sample an action which isn't all that smart
+    from cem_agent import CEMAgent
+    agent = CEMAgent()
+    agent.load()
+    return agent.predict(env, agent.weights)
     return env.action_space.sample()
 
 
@@ -30,6 +35,7 @@ def heuristic_policy(obs, env):
     from gym_simplifiedtetris.agents import DellacherieAgent
     agent = DellacherieAgent()
     return agent.predict(env)
+
 
 def evaluate_policy(num_episodes: int, max_steps: int, policy_type: str, render: bool) -> None:
     """ Evaluates learned tetris policy
@@ -56,7 +62,8 @@ def evaluate_policy(num_episodes: int, max_steps: int, policy_type: str, render:
         obs = env.reset()
         score = 0
         for step in trange(0, max_steps):
-            if render: env.render()
+            if render:
+                env.render()
             action = policy(obs, env)
             obs, reward, done, info = env.step(action)
             score += reward
@@ -69,12 +76,18 @@ def evaluate_policy(num_episodes: int, max_steps: int, policy_type: str, render:
 
     print(f"Summary over {num_episodes} epsiodes:  Highest score: {np.max(ep_scores)} Mean score: {np.mean(ep_scores)} Std score: {np.std(ep_scores)}")
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test trained Tetris policy.')
-    parser.add_argument('--num_episodes', type=int, default=10, help='Number of evaluation episodes')
-    parser.add_argument('--max_steps', type=int, default=10000, help='Maximum number of steps after which game terminates')
-    parser.add_argument('--policy', type=str, choices=['test', 'heuristic'], default='test', help='Type of policy to evaluate')
-    parser.add_argument('--render', action='store_true', default=False, help='Render environment')
+    parser.add_argument('--num_episodes', type=int, default=10,
+                        help='Number of evaluation episodes')
+    parser.add_argument('--max_steps', type=int, default=10000,
+                        help='Maximum number of steps after which game terminates')
+    parser.add_argument('--policy', type=str, choices=[
+                        'test', 'heuristic'], default='test', help='Type of policy to evaluate')
+    parser.add_argument('--render', action='store_true',
+                        default=False, help='Render environment')
 
     args = parser.parse_args()
-    evaluate_policy(num_episodes=args.num_episodes, max_steps=args.max_steps, policy_type=args.policy, render=args.render)
+    evaluate_policy(num_episodes=args.num_episodes, max_steps=args.max_steps,
+                    policy_type=args.policy, render=args.render)
